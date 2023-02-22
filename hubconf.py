@@ -6,19 +6,23 @@ from torchvision import datasets
 #Convert a PIL Image to tensor
 from torchvision.transforms import ToTensor
 
-trainingData = datasets.FashionMNIST(
-    root="data",
-    train=True,
-    download=True,
-    transform=ToTensor(),
-)
+def load_data():
+    trainingData = datasets.FashionMNIST(
+        root="data",
+        train=True,
+        download=True,
+        transform=ToTensor(),
+    )
 
-testData = datasets.FashionMNIST(
-    root="data",
-    train=False,
-    download=True,
-    transform=ToTensor(),
-)
+    testData = datasets.FashionMNIST(
+        root="data",
+        train=False,
+        download=True,
+        transform=ToTensor(),
+    )
+    
+    return trainingData, testData
+
 
 batchSize = 64
 
@@ -60,11 +64,13 @@ class NeuralNetwork(nn.Module):
         logits = self.linear_relu_stack(x)
         return logits
 
-model = NeuralNetwork().to(device)
-print(model)
+def get_model():
+    model = NeuralNetwork().to(device)
+    return model
 
-loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+#     print(model)
+
+
 
 def train(dataloader, model, loss_fn, optimizer):
     size = len(dataloader.dataset)
@@ -84,6 +90,11 @@ def train(dataloader, model, loss_fn, optimizer):
             loss, current = loss.item(), batch * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
+
+def get_lossfn_and_optimizer(model):
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(mymodel.parameters(), lr=1e-3)
+    return loss_fn, optimizer
 
 def test(dataloader, model, loss_fn):
     size = len(dataloader.dataset)
